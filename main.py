@@ -30,8 +30,8 @@ def generate_day_trip(destinations, restaurants, transportation, entertainment):
 
 
 def print_trip_details(trip):
-    print('\nHere is your current day trip:')
-    print('\tLocation:', trip[0])
+    print('\nHere is your day trip:')
+    print('\tDestination:', trip[0])
     print('\tRestaurant:', trip[1])
     print('\tTansportation:', trip[2])
     print('\tEntertainment:', trip[3])
@@ -51,8 +51,71 @@ def prompt_user_input_number(message):
     return user_input
 
 
-print('Welcome to the Day Trip Generator!')
+def display_update_options(current_trip):
+    counter = 1
+
+    print('\nWhat do you want to update?')
+    for option in current_trip:
+        print(f'\tSelect [{counter}] to update {option}.')
+        counter += 1
+    print('\tSelect [0] to cancel.')
+
+
+def update_trip_selection(current_trip, item):
+    current_item = current_trip[item - 1]
+    new_trip = current_trip
+
+    if item == 1:
+        new_item = make_random_selection(destinations)
+    elif item == 2:
+        new_item = make_random_selection(restaurants)
+    elif item == 3:
+        new_item = make_random_selection(types_of_transportation)
+    elif item == 4:
+        new_item = make_random_selection(types_of_entertainment)
+    else:
+        return
+
+    while current_item == new_item:
+        return update_trip_selection(new_trip, item)
+
+    new_trip[item - 1] = new_item
+    print(f'The {current_item} option has been updated to {new_item}.')
+    return new_trip
+
+
+def update_trip(current_trip):
+    update_cycle = True
+    update_cycle_count = 1
+    updated_trip = current_trip
+
+    while update_cycle == True:
+        if update_cycle_count == 1:
+            update_message = '\nDo you want to update your trip? Enter [Yes] or [No]: '
+            update_cycle_count += 1
+        else:
+            update_message = '\nDo you want to make other updates? Enter [Yes] or [No]: '
+
+        update_trip_prompt = prompt_user_input_boolean(update_message)
+
+        if update_trip_prompt:
+            display_update_options(current_trip)
+            item_to_update = prompt_user_input_number(
+                '\nEnter update option (use number): ')
+
+            if item_to_update != 0:
+                updated_trip = update_trip_selection(
+                    current_trip, item_to_update)
+        else:
+            update_cycle = False
+
+    return updated_trip
+
+
+print('\nWelcome to the Day Trip Generator!')
 trip = generate_day_trip(destinations, restaurants,
                          types_of_transportation, types_of_entertainment)
 
 print_trip_details(trip)
+new_trip = update_trip(trip)
+print_trip_details(new_trip)
