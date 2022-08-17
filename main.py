@@ -30,7 +30,7 @@ def generate_day_trip(destinations, restaurants, transportation, entertainment):
 
 
 def print_trip_details(trip):
-    print('\nHere is your day trip:')
+    print('\nDay Trip Information:')
     print('\tDestination:', trip[0])
     print('\tRestaurant:', trip[1])
     print('\tTansportation:', trip[2])
@@ -63,7 +63,7 @@ def display_update_options(current_trip):
 
 def update_trip_selection(current_trip, item):
     current_item = current_trip[item - 1]
-    new_trip = current_trip
+    new_trip = current_trip.copy()
 
     if item == 1:
         new_item = make_random_selection(destinations)
@@ -87,11 +87,11 @@ def update_trip_selection(current_trip, item):
 def update_trip(current_trip):
     update_cycle = True
     update_cycle_count = 1
-    updated_trip = current_trip
+    updated_trip = current_trip.copy()
 
     while update_cycle == True:
         if update_cycle_count == 1:
-            update_message = '\nDo you want to update your trip? Enter [Yes] or [No]: '
+            update_message = '\nDo you want to update this trip? Enter [Yes] or [No]: '
             update_cycle_count += 1
         else:
             update_message = '\nDo you want to make other updates? Enter [Yes] or [No]: '
@@ -99,13 +99,13 @@ def update_trip(current_trip):
         update_trip_prompt = prompt_user_input_boolean(update_message)
 
         if update_trip_prompt:
-            display_update_options(current_trip)
+            display_update_options(updated_trip)
             item_to_update = prompt_user_input_number(
                 '\nEnter update option (use number): ')
 
             if item_to_update != 0:
                 updated_trip = update_trip_selection(
-                    current_trip, item_to_update)
+                    updated_trip, item_to_update)
         else:
             update_cycle = False
 
@@ -115,7 +115,16 @@ def update_trip(current_trip):
 print('\nWelcome to the Day Trip Generator!')
 trip = generate_day_trip(destinations, restaurants,
                          types_of_transportation, types_of_entertainment)
-
 print_trip_details(trip)
-new_trip = update_trip(trip)
-print_trip_details(new_trip)
+
+is_trip_completed = False
+while is_trip_completed == False:
+    trip_confirmation_input = prompt_user_input_boolean(
+        '\nDo you want to complete this trip? \nEnter [Yes] to CONFIRM or [No] to UPDATE: ')
+
+    if trip_confirmation_input == False:
+        trip = update_trip(trip)
+    else:
+        is_trip_completed = True
+        print('\nYour day trip is completed!')
+        print_trip_details(trip)
