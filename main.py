@@ -86,26 +86,35 @@ def update_trip_selection(current_trip, item):
 
 def update_trip(current_trip):
     update_cycle = True
-    update_cycle_count = 1
+    update_cycle_count = 0
     updated_trip = current_trip.copy()
 
     while update_cycle == True:
-        if update_cycle_count == 1:
-            update_message = '\nDo you want to update this trip? Enter [Yes] or [No]: '
-            update_cycle_count += 1
+        if update_cycle_count > 0:
+            update_trip_prompt = prompt_user_input_boolean(
+                '\nDo you want to make other updates? Enter [Yes] or [No]: ')
         else:
-            update_message = '\nDo you want to make other updates? Enter [Yes] or [No]: '
-
-        update_trip_prompt = prompt_user_input_boolean(update_message)
+            update_trip_prompt = True
+            update_cycle_count += 1
 
         if update_trip_prompt:
             display_update_options(updated_trip)
-            item_to_update = prompt_user_input_number(
-                '\nEnter update option (use number): ')
 
-            if item_to_update != 0:
-                updated_trip = update_trip_selection(
-                    updated_trip, item_to_update)
+            valid_option = False
+            while valid_option == False:
+                item_to_update = prompt_user_input_number(
+                    '\nEnter the number of the option to update: ')
+
+                if item_to_update == 0:
+                    print('\tUpdate cancelled.')
+                    valid_option = True
+                    update_cycle = False
+                elif 0 < item_to_update <= len(updated_trip):
+                    updated_trip = update_trip_selection(
+                        updated_trip, item_to_update)
+                    valid_option = True
+                else:
+                    print('\tInvalid option. Please try again.')
         else:
             update_cycle = False
 
